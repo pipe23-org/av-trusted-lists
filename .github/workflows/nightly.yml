@@ -1,0 +1,105 @@
+name: nightly
+
+on:
+  schedule:
+    - cron: '23 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: nightly
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # The archive is the `archive` branch, checked out beside the code. The
+      # first run creates the branch.
+      - name: Check out the archive branch
+        shell: bash
+        run: |
+          if git ls-remote --exit-code --heads origin archive >/dev/null; then
+            git fetch origin archive:archive
+            git worktree add archive archive
+          else
+            git worktree add --orphan -b archive archive
+          fi
+
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: "3.13"
+
+      - run: uv sync --locked --no-dev
+
+      - name: Check both lists
+        run: uv run --no-sync av-trusted-lists watch archive --reports reports
+
+      # Runs after a failed check too: a list that was archived but could not
+      # be read is kept, and the check log records the run.
+      - name: Commit the archive
+        if: ${{ !cancelled() && hashFiles('reports/summary.txt') != '' }}
+        shell: bash
+        working-directory: archive
+        run: |
+          git add -A
+          git -c user.name="github-actions[bot]" \
+              -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+              commit -m "$(cat ../reports/summary.txt)"
+          git push origin archive
+
+      # One standing issue carries every change as a comment. The first change
+      # creates it.
+      - name: Report changes
+        if: ${{ !cancelled() && hashFiles('reports/*.md') != '' }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          issue=$(gh issue list --repo "$GITHUB_REPOSITORY" --label list-change --state open \
+            --json number --jq '.[0].number // empty')
+          if [ -z "$issue" ]; then
+            gh label create list-change --repo "$GITHUB_REPOSITORY" --force \
+              --description "A trusted list changed"
+            url=$(gh issue create --repo "$GITHUB_REPOSITORY" --label list-change \
+              --title "List changes" \
+              --body "The nightly workflow adds a comment to this issue each time a list changes.")
+            issue="${url##*/}"
+          fi
+          for report in reports/*.md; do
+            { echo "## $(head -n 1 "$report")"; tail -n +2 "$report"; } > comment.md
+            gh issue comment "$issue" --repo "$GITHUB_REPOSITORY" --body-file comment.md
+          done
+
+      - name: Build the page
+        run: uv run --no-sync av-trusted-lists build archive site
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: page
+          path: site
+
+      - uses: actions/upload-pages-artifact@v5
+        if: ${{ vars.DEPLOY_PAGES == 'true' }}
+        with:
+          path: site
+
+  # Publishing is off until the repository variable DEPLOY_PAGES is "true".
+  deploy:
+    needs: watch
+    if: ${{ vars.DEPLOY_PAGES == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

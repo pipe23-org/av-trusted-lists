@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EU age verification: providers by country</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --plane: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+  --rule: #e1e0d9; --ctx: #efeee9; --eu: #d3d1c8; --test: #86b6ef; --prod: #1c5cab;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --plane: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
+    --rule: #2c2c2a; --ctx: #262625; --eu: #45453f; --test: #184f95; --prod: #6da7ec;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--plane); color: var(--ink);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 1080px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 22px; margin: 0 0 12px; }
+h2 { font-size: 16px; margin: 40px 0 8px; }
+h3 { font-size: 14px; margin: 20px 0 6px; }
+p { margin: 0 0 10px; max-width: 70ch; }
+a { color: inherit; }
+.sub { color: var(--ink-2); }
+.intro p { max-width: none; }
+.cols { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: stretch;
+  margin-top: 20px; }
+.card { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 12px; }
+.map { display: block; width: 100%; height: auto; }
+.map use { stroke: var(--surface); stroke-width: 1; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.map .ctx { fill: var(--ctx); }
+.map .eu { fill: var(--eu); }
+.map .test { fill: var(--test); }
+.map .prod { fill: var(--prod); }
+.map use[data-cc] { cursor: pointer; }
+.map use.outline { fill: none; stroke: var(--ink); stroke-width: 1.5; pointer-events: none; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 10px 0 0; padding: 0; list-style: none;
+  color: var(--ink-2); font-size: 13px; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 6px;
+  vertical-align: -1px; }
+#panel { font-size: 14px; }
+#panel h2 { margin: 0 0 8px; font-size: 17px; }
+#panel h3 { margin: 14px 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .04em;
+  color: var(--ink-2); }
+#panel .svc { margin: 0 0 10px; padding-left: 10px; border-left: 2px solid var(--rule); }
+#panel .svc b { display: block; font-weight: 600; }
+#panel .svc span { display: block; color: var(--ink-2); }
+#panel .none { color: var(--muted); }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; font-size: 13px; width: 100%; }
+th, td { text-align: left; padding: 5px 10px 5px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { color: var(--ink-2); font-weight: 600; white-space: nowrap; }
+td.nw { white-space: nowrap; }
+.facts th { width: 200px; font-weight: 400; }
+.facts td { overflow-wrap: anywhere; }
+dl { margin: 0; max-width: 70ch; }
+dt { font-weight: 600; margin-top: 10px; }
+dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 800px) {
+  .cols { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+{{DEFS}}
+<main>
+<h1>EU age verification: providers by country</h1>
+<div class="intro">
+<p>The EU age-verification scheme lets a person prove to a website that they are over a given age. The proof is
+issued by a provider that an EU member state has authorised. Member states notify their providers to the European
+Commission, which publishes them in one signed file, the Age Verification Trusted List. A website that follows the
+scheme uses the list to decide which providers' proofs to accept.</p>
+<p>The Commission publishes a second list for integration testing. This page reads both lists once a day and shows
+which countries have a provider on each.</p>
+<p>A listing records that a member state has notified the Commission of a provider. Whether an app is available to
+the public in that country, and whether any website accepts it, is outside what the lists record. The terms used on
+this page are defined under <a href="#terms">Terms</a>.</p>
+<p class="sub">Built {{BUILT}}. Countries with a recognized provider: {{N_PROD}} on the trusted list, {{N_TEST}} on
+the test list.</p>
+</div>
+
+<div class="cols">
+  <div class="card">
+    {{MAP}}
+    <ul class="legend">
+      <li><i style="background:var(--prod)"></i>Recognized provider on the trusted list</li>
+      <li><i style="background:var(--test)"></i>Recognized provider on the test list only</li>
+      <li><i style="background:var(--eu)"></i>EU member state on neither list</li>
+    </ul>
+  </div>
+  <aside class="card"><div id="panel" aria-live="polite"></div></aside>
+</div>
+
+<h2>Services</h2>
+<div class="scroll">
+<table>
+<thead><tr><th>Country</th><th>List</th><th>Provider</th><th>Service</th><th>Status</th><th>Status since</th>
+<th>Certificate validity</th><th>Certificate state</th></tr></thead>
+<tbody>
+{{ROWS}}
+</tbody>
+</table>
+</div>
+
+<h2>Changes</h2>
+{{EVENTS}}
+
+<h2 id="terms">Terms</h2>
+<dl>
+<dt>Trusted list</dt>
+<dd>The Age Verification Trusted List. Its legal notice reads: "The present list contains information notified by
+Member States on the Proof of Age Attestation Providers and the Proof of Age Services they provide for the purpose
+of facilitating compliance of online services with Article 28 of the Digital Services Act."</dd>
+<dt>Test list</dt>
+<dd>The list the Commission publishes in the acceptance environment of its eIDAS Dashboard. Its legal notice reads:
+"The present list contains TEST information notified by Member States on the Proof of Age Attestation Providers and
+the Proof of Age Services they provide for the purpose of integration testing". The entry under Iceland is the
+reference implementation of the age-verification project.</dd>
+<dt>Provider</dt>
+<dd>A Proof of Age Attestation Provider, an organisation that issues proofs of age. A provider has one or more
+services on a list. Each service has a status and a certificate.</dd>
+<dt>Country</dt>
+<dd>The member state in which the provider is established, as the list states it.</dd>
+<dt>recognized, deprecated</dt>
+<dd>The two status values the Commission's specification of the list permits. A country is coloured on the map when
+one of its services has the status recognized.</dd>
+<dt>Status since</dt>
+<dd>The time the list states for the service's current status.</dd>
+<dt>Certificate validity</dt>
+<dd>The period the listed certificate states. A certificate whose period ended before the build date has the state
+expired.</dd>
+</dl>
+<p class="sub" style="margin-top:10px">Dates are UTC.</p>
+
+<h2>Lists</h2>
+{{FACTS}}
+
+<h2>Sources</h2>
+<p>List data: European Commission,
+<a href="https://trust.tech.ec.europa.eu/lists/age-verification/av-tl.xml">Age Verification Trusted List</a> and
+<a href="https://acceptance.trust.tech.ec.europa.eu/lists/age-verification/av-tl.xml">its test list</a>, reused
+under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> as the Commission's
+<a href="https://commission.europa.eu/legal-notice_en">legal notice</a> provides. The tables and the map on this
+page are derived from the lists. The Commission's specification of the list is the "Age Verification Trusted List
+Specifications" document on its
+<a href="https://eidas.ec.europa.eu/efda/trust-services/browse/av-tl">eIDAS Dashboard</a>.</p>
+<p>Country outlines and country names: <a href="https://www.naturalearthdata.com/">Natural Earth</a>, public
+domain.</p>
+<p>This site is independent of the European Commission.</p>
+</main>
+
+<script id="data" type="application/json">{{DATA}}</script>
+<script>
+const D = JSON.parse(document.getElementById('data').textContent);
+const panel = document.getElementById('panel');
+const outline = document.querySelector('.map .outline');
+let pinned = null;
+
+function el(tag, text, cls) {
+  const node = document.createElement(tag);
+  if (text) node.textContent = text;
+  if (cls) node.className = cls;
+  return node;
+}
+
+function show(cc) {
+  panel.replaceChildren();
+  if (!cc) {
+    outline.removeAttribute('href');
+    panel.append(el('p', 'Point at a country, or select one to keep it shown.', 'none'));
+    return;
+  }
+  outline.setAttribute('href', '#c-' + cc);
+  panel.append(el('h2', D.names[cc] || cc));
+  for (const list of Object.values(D.lists)) {
+    panel.append(el('h3', list.label));
+    const entry = list.countries[cc];
+    if (!entry) { panel.append(el('p', 'Not listed.', 'none')); continue; }
+    for (const s of entry.services) {
+      const box = el('div', null, 'svc');
+      box.append(el('b', s.name));
+      if (s.provider !== s.name) box.append(el('span', s.provider));
+      box.append(el('span', s.status + ' since ' + s.since.slice(0, 10)));
+      for (const c of s.certificates)
+        box.append(el('span', 'certificate ' + c.not_before + ' to ' + c.not_after + (c.expired ? ', expired' : '')));
+      if (s.first_seen !== list.first_capture) box.append(el('span', 'first archived ' + s.first_seen));
+      panel.append(box);
+    }
+    if (entry.last_change !== list.first_capture)
+      panel.append(el('p', 'Last change archived ' + entry.last_change + '.', 'none'));
+  }
+}
+
+const map = document.querySelector('.map');
+map.addEventListener('pointerover', e => {
+  const u = e.target.closest('use[data-cc]');
+  if (u && e.pointerType !== 'touch') show(u.dataset.cc);
+});
+map.addEventListener('pointerleave', () => show(pinned));
+map.addEventListener('click', e => {
+  const u = e.target.closest('use[data-cc]');
+  pinned = u && u.dataset.cc !== pinned ? u.dataset.cc : null;
+  show(pinned);
+});
+pinned = D.names[location.hash.slice(1)] ? location.hash.slice(1) : null;
+show(pinned);
+</script>
+</body>
+</html>

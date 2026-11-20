@@ -1,0 +1,79 @@
+[build-system]
+
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+[project]
+name = "av-trusted-lists"
+version = "0.0.1.dev0"
+description = "Nightly archive of the EU age-verification trusted lists and a static page of providers by country"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "Nathan Schepers", email = "nathan.schepers@protonmail.com" }]
+dependencies = [
+    "cryptography>=42",
+]
+
+[project.urls]
+Homepage = "https://github.com/pipe23-org/av-trusted-lists"
+Repository = "https://github.com/pipe23-org/av-trusted-lists"
+Issues = "https://github.com/pipe23-org/av-trusted-lists/issues"
+
+[project.scripts]
+av-trusted-lists = "av_trusted_lists.__main__:main"
+
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/av_trusted_lists"]
+
+
+
+[dependency-groups]
+test = ["pytest>=8", "pytest-cov"]
+docs = ["interrogate"]
+dev = [
+    { include-group = "test" },
+    { include-group = "docs" },
+    "ruff",
+    "mypy",
+]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+
+# Closed list via `select`, never `extend-select`: a ruff upgrade must not change
+# which rules run. Widen the list deliberately, per project.
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D"]
+
+[tool.mypy]
+strict = true
+files = ["src", "tests"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+
+[tool.interrogate]
+fail-under = 100
+ignore-init-module = false
+
+[tool.coverage.run]
+branch = true
+source = ["av_trusted_lists"]
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
+exclude_also = ["if TYPE_CHECKING:", "raise NotImplementedError", 'if __name__ == "__main__":']
