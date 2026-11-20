@@ -177,18 +177,19 @@ def _rows(lists: dict[str, dict[str, Any]], names: dict[str, str]) -> str:
         for entry in lists.values():
             for service in entry["countries"].get(code, {"services": []})["services"]:
                 for certificate in service["certificates"] or [None]:
-                    validity, state = "", ""
+                    start, end, state = "", "", ""
                     if certificate:
-                        validity = f"{certificate['not_before']} to {certificate['not_after']}"
+                        start, end = certificate["not_before"], certificate["not_after"]
                         state = "expired" if certificate["expired"] else "valid"
                     cells = [
                         (names.get(code, code), ""),
-                        (entry["label"], ""),
+                        (entry["label"], " class=nw"),
                         (service["provider"], ""),
                         (service["name"], ""),
                         (service["status"], ""),
                         (service["since"][:10], " class=nw"),
-                        (validity, " class=nw"),
+                        (start, " class=nw"),
+                        (end, " class=nw"),
                         (state, ""),
                     ]
                     rows.append(

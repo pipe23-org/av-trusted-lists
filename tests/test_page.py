@@ -90,7 +90,7 @@ def test_expired_certificate_marked(tmp_path: Path) -> None:
     (archive / "acceptance").mkdir(parents=True)
     build(archive, out, today=TODAY)
     page = (out / "index.html").read_text()
-    assert "<td class=nw>2026-01-01 to 2026-01-02</td><td>expired</td>" in page
+    assert "<td class=nw>2026-01-01</td><td class=nw>2026-01-02</td><td>expired</td>" in page
 
 
 def test_unexpired_certificate_valid(tmp_path: Path) -> None:
@@ -104,7 +104,7 @@ def test_unexpired_certificate_valid(tmp_path: Path) -> None:
     (archive / "acceptance").mkdir(parents=True)
     build(archive, out, today=TODAY)
     page = (out / "index.html").read_text()
-    assert "<td class=nw>2026-01-01 to 2030-01-02</td><td>valid</td>" in page
+    assert "<td class=nw>2026-01-01</td><td class=nw>2030-01-02</td><td>valid</td>" in page
 
 
 def test_service_without_certificate_listed(tmp_path: Path) -> None:
@@ -124,7 +124,7 @@ def test_service_without_certificate_listed(tmp_path: Path) -> None:
     build(archive, out, today=TODAY)
     page = (out / "index.html").read_text()
     assert "<td>Age check</td>" in page
-    assert "<td class=nw>2026-01-05</td><td class=nw></td><td></td></tr>" in page
+    assert "<td class=nw>2026-01-05</td><td class=nw></td><td class=nw></td><td></td></tr>" in page
 
 
 def test_list_without_archived_version_built(tmp_path: Path) -> None:

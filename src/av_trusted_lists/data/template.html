@@ -55,6 +55,10 @@ table { border-collapse: collapse; font-size: 13px; width: 100%; }
 th, td { text-align: left; padding: 5px 10px 5px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
 th { color: var(--ink-2); font-weight: 600; white-space: nowrap; }
 td.nw { white-space: nowrap; }
+th button { all: unset; cursor: pointer; }
+th button:focus-visible { outline: 2px solid var(--prod); outline-offset: 2px; }
+th[aria-sort="ascending"] button::after { content: " \2191"; }
+th[aria-sort="descending"] button::after { content: " \2193"; }
 .facts th { width: 200px; font-weight: 400; }
 .facts td { overflow-wrap: anywhere; }
 dl { margin: 0; max-width: 70ch; }
@@ -99,9 +103,11 @@ the test list.</p>
 
 <h2>Services</h2>
 <div class="scroll">
-<table>
-<thead><tr><th>Country</th><th>List</th><th>Provider</th><th>Service</th><th>Status</th><th>Status since</th>
-<th>Certificate validity</th><th>Certificate state</th></tr></thead>
+<table id="services">
+<thead><tr><th><button>Country</button></th><th><button>List</button></th><th><button>Provider</button></th>
+<th><button>Service</button></th><th><button>Status</button></th><th><button>Status since</button></th>
+<th><button>Certificate from</button></th><th><button>Certificate until</button></th>
+<th><button>Certificate state</button></th></tr></thead>
 <tbody>
 {{ROWS}}
 </tbody>
@@ -132,7 +138,7 @@ services on a list. Each service has a status and a certificate.</dd>
 one of its services has the status recognized.</dd>
 <dt>Status since</dt>
 <dd>The time the list states for the service's current status.</dd>
-<dt>Certificate validity</dt>
+<dt>Certificate from, certificate until</dt>
 <dd>The period the listed certificate states. A certificate whose period ended before the build date has the state
 expired.</dd>
 </dl>
@@ -209,6 +215,21 @@ map.addEventListener('click', e => {
 });
 pinned = D.names[location.hash.slice(1)] ? location.hash.slice(1) : null;
 show(pinned);
+
+// A column heading sorts the table by that column; a second click reverses it.
+const services = document.getElementById('services');
+services.querySelectorAll('th button').forEach((button, column) => {
+  button.addEventListener('click', () => {
+    const heading = button.parentElement;
+    const reverse = heading.getAttribute('aria-sort') === 'ascending';
+    const rows = [...services.tBodies[0].rows];
+    rows.sort((a, b) => a.cells[column].textContent.localeCompare(b.cells[column].textContent));
+    if (reverse) rows.reverse();
+    services.querySelectorAll('th').forEach(th => th.removeAttribute('aria-sort'));
+    heading.setAttribute('aria-sort', reverse ? 'descending' : 'ascending');
+    services.tBodies[0].append(...rows);
+  });
+});
 </script>
 </body>
 </html>
