@@ -63,8 +63,6 @@ def build(archive: Path, out: Path, today: date | None = None) -> None:
         "{{EVENTS}}": _events(lists, names),
         "{{FACTS}}": "".join(_facts(lists[name]) for name in LISTS),
         "{{BUILT}}": built,
-        "{{N_PROD}}": str(len(active["production"])),
-        "{{N_TEST}}": str(len(active["acceptance"])),
         # "<" is written as an escape so no list text can end or alter the script element.
         "{{DATA}}": json.dumps(page_data, ensure_ascii=False, separators=(",", ":")).replace(
             "<", "\\u003c"
