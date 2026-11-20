@@ -1,0 +1,14 @@
+{
+  "list": "production",
+  "url": "https://trust.tech.ec.europa.eu/lists/age-verification/av-tl.xml",
+  "retrieved": "2026-11-20T12:01:01Z",
+  "sha256": "d8cd20567a029c0fbc6b05e8f3a90fc3e6a172bd99869755095bbc82d0a81272",
+  "bytes": 33576,
+  "last_modified": "Wed, 18 Nov 2026 16:06:16 GMT",
+  "etag": "\"9806c38156cd596b3ca4f798d1a65f53\"",
+  "content_type": "application/xml",
+  "previous_sha256": null,
+  "repository": "pipe23-org/av-trusted-lists",
+  "commit": "05be857ae8848d248e2749bf7054bd54bf8d8b93",
+  "run": "44732229145"
+}

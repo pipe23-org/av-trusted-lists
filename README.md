@@ -89,8 +89,8 @@ GeoJSON, which is public domain.
 
 ## Nightly workflow
 
-The `nightly` workflow runs at 04:23 UTC and on manual dispatch. The archive is the `archive`
-branch, which the first run creates. Each check is committed to it. A changed list gets a
+The `nightly` workflow runs at 04:23 UTC and on manual dispatch. The archive is the
+`archive` directory on `main`. Each check is committed to it. A changed list gets a
 comment on the open issue labelled `list-change`. The workflow opens that issue when none is
 open. The workflow builds the page and uploads it as the `page` workflow artifact.
 

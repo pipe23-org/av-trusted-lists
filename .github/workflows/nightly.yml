@@ -19,18 +19,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      # The archive is the `archive` branch, checked out beside the code. The
-      # first run creates the branch.
-      - name: Check out the archive branch
-        shell: bash
-        run: |
-          if git ls-remote --exit-code --heads origin archive >/dev/null; then
-            git fetch origin archive:archive
-            git worktree add archive archive
-          else
-            git worktree add --orphan -b archive archive
-          fi
-
       - uses: astral-sh/setup-uv@v10.3.3
         with:
           python-version: "3.13"
@@ -45,13 +33,12 @@ jobs:
       - name: Commit the archive
         if: ${{ !cancelled() && hashFiles('reports/summary.txt') != '' }}
         shell: bash
-        working-directory: archive
         run: |
-          git add -A
+          git add archive
           git -c user.name="github-actions[bot]" \
               -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
-              commit -m "$(cat ../reports/summary.txt)"
-          git push origin archive
+              commit -m "$(cat reports/summary.txt)"
+          git push origin HEAD:main
 
       # One standing issue carries every change as a comment. The first change
       # creates it.
