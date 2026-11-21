@@ -27,6 +27,10 @@ p { margin: 0 0 10px; max-width: 70ch; }
 a { color: inherit; }
 .sub { color: var(--ink-2); }
 .intro p { max-width: none; }
+.note { margin: 0 0 16px; padding: 10px 14px; background: var(--surface); border: 1px solid var(--rule);
+  border-left: 3px solid var(--prod); border-radius: 6px; }
+.note p { max-width: none; }
+.note p:last-child { margin-bottom: 0; }
 .cols { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 16px; align-items: stretch;
   margin-top: 20px; }
 .card { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 12px; }
@@ -73,6 +77,20 @@ dd { margin: 0; color: var(--ink-2); }
 {{DEFS}}
 <main>
 <h1>EU age verification: providers by country</h1>
+<aside class="note">
+<p><strong>Note.</strong> The EU age-verification solution is the subject of a Commission recommendation.
+<a href="https://eur-lex.europa.eu/eli/reco/2026/1035/oj">Commission Recommendation (EU) 2026/1035</a> of 29 April
+2026 states: "the Commission recommends that Member States make available, by 31 December 2026, an EU age
+verification solution, either integrated in the European Digital Identity Wallets or provided as a stand-alone
+application, or both." Under <a href="https://eur-lex.europa.eu/eli/treaty/tfeu_2016/art_288/oj">Article 288</a> of
+the Treaty on the Functioning of the European Union, "Recommendations and opinions shall have no binding force."</p>
+<p>The Commission's
+<a href="https://github.com/eu-digital-identity-wallet/av-doc-technical-specification/blob/main/docs/architecture-and-technical-specifications.md">technical
+specification</a> states that the solution "is intended to bridge the gap until the EU Digital Identity (EUDI)
+Wallets become available by the end of 2026, enabling the incorporation of the age verification functionality in
+them". The Commission's "AV Trusted List Specifications" calls it "a short-term solution that will offer a bridge
+before the EU Digital Identity Wallet is available to EU citizens and residents by end 2026".</p>
+</aside>
 <div class="intro">
 <p>The EU age-verification scheme lets a person prove to a website that they are over a given age. The proof is
 issued by a provider that an EU member state has authorised. Member states notify their providers to the European
